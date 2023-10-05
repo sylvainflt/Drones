@@ -2,8 +2,8 @@ package drones;
 
 public abstract class Cellule implements Cell{
 
-	private int posX;
-	private int posY;
+	protected int posX;
+	protected int posY;
 	
 	public Cellule(int posX, int posY) {
 		super();
