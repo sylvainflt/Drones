@@ -20,6 +20,10 @@ public class TestWorld {
 		w.majMap();
 		w.printWorld();
 		
+		w.movements();
+		w.majMap();
+		w.printWorld();
+		
 	}
 
 }

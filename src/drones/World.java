@@ -21,7 +21,7 @@ public class World {
 		cellules.add(new Wall(1,0)); 
 		cellules.add(new EmptyCell(1,1)); 
 		cellules.add(new EmptyCell(1,2)); 
-		cellules.add(new Intruder(1,3)); 
+		cellules.add(new Intruder(1,3, "georges")); 
 		cellules.add(new EmptyCell(1,4)); 
 		cellules.add(new MoneyBag(1,5));
 		cellules.add(new Wall(1,6));
@@ -67,51 +67,14 @@ public class World {
 	public void movements() {
 		for(int i=0; i<cellules.size(); i++) {
 			Cellule c = (Cellule)cellules.get(i);			
-			if(c instanceof Drone) {
+			if(c instanceof Player) {
 				
-				((Drone)c).move(caseVoisine(c));
+				((Player)c).play(cellules);
 			}
 			
 		}
-		/*
-		Drone d = (Drone)cellules.get(22);		
-		d.move(caseVoisineHaut(d));
 		
-		Intruder i = (Intruder)cellules.get(10);		
-		i.move(caseVoisineBas(i));		
-		*/
 	}
 	
-	public Cellule caseVoisine(Cellule c) {
-		int i = (int)Math.floor(Math.random()*4);
-		switch(i) {
-			case 0 : return caseVoisineGauche(c);
-			case 1 : return caseVoisineDroite(c);
-			case 2 : return caseVoisineHaut(c);
-			default : return caseVoisineBas(c);
-		}
-	}
 	
-	public Cellule caseVoisineDroite(Cellule c) {
-		return getCellule(c.getPosX(), c.getPosY()+1);
-	}
-	public Cellule caseVoisineGauche(Cellule c) {
-		return getCellule(c.getPosX(), c.getPosY()-1);
-	}
-	public Cellule caseVoisineHaut(Cellule c) {
-		return getCellule(c.getPosX()-1, c.getPosY());
-	}
-	public Cellule caseVoisineBas(Cellule c) {
-		return getCellule(c.getPosX()+1, c.getPosY());
-	}
-	
-	public Cellule getCellule(int x, int y) {
-		for(int i=0; i<cellules.size(); i++) {
-			Cellule c = (Cellule)cellules.get(i);			
-			if(c.getPosX() == x && c.getPosY() == y) {
-				return c;
-			}
-		}
-		return null;
-	}
 }
