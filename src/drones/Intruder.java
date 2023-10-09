@@ -1,6 +1,7 @@
 package drones;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Intruder extends Cellule implements Cell, Player{
 
@@ -8,8 +9,8 @@ public class Intruder extends Cellule implements Cell, Player{
 	
 	private int money = 0;
 	
-	public Intruder(int x, int y, String name) {
-		super(x,y);
+	public Intruder(int y, int x, String name) {
+		super(y,x);
 		this.name = name;
 	}
 		
@@ -31,47 +32,131 @@ public class Intruder extends Cellule implements Cell, Player{
 		return true;
 	}
 	
-	public void play(ArrayList<Cellule> cellules) {
-		if(nextToMoney(cellules, this)) {
+	public void play(ArrayList<Cellule> cellules, Scanner sc) {
+		if(thereIsMoney(cellules)) {
+			findMoney(cellules, this);
+		}else {
+			findExit(cellules, this);
+		}
+		/*if(nextToMoney(cellules, this)) {
 			System.out.println("money!");
 			collectMoney(cellules, this);
 		}else {
 			move(caseVoisine(cellules, this));
+		}*/
+	}
+	
+	public void findExit(ArrayList<Cellule> cellules, Cellule c) {
+		int exitX = -1, exitY = -1;
+		for(int i=0; i<cellules.size(); i++) {
+			Cellule cellule = (Cellule)cellules.get(i);			
+			if(cellule instanceof Exit) {
+				exitX = cellule.posX;
+				exitY = cellule.posY;
+				break;
+			}			
 		}
+		if(nextToExit(cellules, this)) {
+			System.out.println("exit!");
+			takeExit(cellules, this);
+		}else {
+			moveTowards(cellules, c, exitY, exitX);
+		}
+	}
+	
+	public void takeExit(ArrayList<Cellule> cellules, Cellule c) {
+				
+		replaceCell(cellules, this.getPosY(), this.getPosX());
+		
+		System.out.println(name+" is out with "+money+" money");
+	}
+	
+	public void findMoney(ArrayList<Cellule> cellules, Cellule c) {
+		int moneyX = -1, moneyY = -1;
+		for(int i=0; i<cellules.size(); i++) {
+			Cellule cellule = (Cellule)cellules.get(i);			
+			if(cellule instanceof MoneyBag) {
+				moneyX = cellule.posX;
+				moneyY = cellule.posY;
+				break;
+			}			
+		}
+		if(nextToMoney(cellules, this)) {
+			System.out.println("money!");
+			collectMoney(cellules, this);
+		}else {
+			moveTowards(cellules, c, moneyY, moneyX);
+		}
+		
+	}
+	
+	public void moveTowards(ArrayList<Cellule> cellules, Cellule c, int y, int x) {
+		boolean moved = false;
+		if(x > this.posX) {
+			moved = move(caseVoisineDroite(cellules, c));
+		}else if(x < this.posX) {
+			moved = move(caseVoisineGauche(cellules, c));
+		}
+		if(!moved) {
+			if(y > this.posY) {
+				moved = move(caseVoisineBas(cellules, c));
+			}else if(y < this.posY) {
+				moved = move(caseVoisineHaut(cellules, c));
+			}
+		}
+	}
+	
+	public boolean thereIsMoney(ArrayList<Cellule> cellules) {
+		for(int i=0; i<cellules.size(); i++) {
+			Cellule c = (Cellule)cellules.get(i);			
+			if(c instanceof MoneyBag) {
+				return true;
+			}			
+		}
+		return false;
 	}
 	
 	public void collectMoney(ArrayList<Cellule> cellules, Cellule c) {
 		money++;
 		if(caseVoisineGauche(cellules, c) instanceof MoneyBag) {			
-			replaceCell(cellules, caseVoisineGauche(cellules, c).getPosX(), 
-					caseVoisineGauche(cellules, c).getPosY());
+			replaceCell(cellules, caseVoisineGauche(cellules, c).getPosY(), 
+					caseVoisineGauche(cellules, c).getPosX());
 		}else if(caseVoisineDroite(cellules, c) instanceof MoneyBag) {			
-			replaceCell(cellules, caseVoisineDroite(cellules, c).getPosX(), 
-					caseVoisineDroite(cellules, c).getPosY());
+			replaceCell(cellules, caseVoisineDroite(cellules, c).getPosY(), 
+					caseVoisineDroite(cellules, c).getPosX());
 		}else if(caseVoisineHaut(cellules, c) instanceof MoneyBag) {			
-			replaceCell(cellules, caseVoisineHaut(cellules, c).getPosX(), 
-					caseVoisineHaut(cellules, c).getPosY());
+			replaceCell(cellules, caseVoisineHaut(cellules, c).getPosY(), 
+					caseVoisineHaut(cellules, c).getPosX());
 		}else {			
-			replaceCell(cellules, caseVoisineBas(cellules, c).getPosX(), 
-					caseVoisineBas(cellules, c).getPosY());
+			replaceCell(cellules, caseVoisineBas(cellules, c).getPosY(), 
+					caseVoisineBas(cellules, c).getPosX());
 		}
 		System.out.println("money of "+name+" is : "+money);
 	}
 	
-	public void replaceCell(ArrayList<Cellule> cellules, int posX, int posY) {
-		cellules.set(cellIndex(cellules, posX, posY), new EmptyCell(posX, posY));
+	public void replaceCell(ArrayList<Cellule> cellules, int posY, int posX) {
+		cellules.set(cellIndex(cellules, posY, posX), new EmptyCell(posY, posX));
 	}
 	
-	public int cellIndex(ArrayList<Cellule> cellules, int posX, int posY) {
+	public int cellIndex(ArrayList<Cellule> cellules, int posY, int posX) {
 		for(int i=0; i<cellules.size(); i++) {
 			Cellule c = (Cellule)cellules.get(i);			
-			if(c.getPosX() == posX && c.getPosY() == posY) {
+			if(c.getPosY() == posY && c.getPosX() == posX) {
 				return i;
 			}
 		}
 		return -1;
 	}
-	
+	public boolean nextToExit(ArrayList<Cellule> cellules, Cellule c) {
+		if(caseVoisineGauche(cellules, c) instanceof Exit
+			|| caseVoisineDroite(cellules, c) instanceof Exit
+			|| caseVoisineHaut(cellules, c) instanceof Exit
+			|| caseVoisineBas(cellules, c) instanceof Exit) {
+			return true;
+		}else {
+			return false;
+		}
+	}
 	public boolean nextToMoney(ArrayList<Cellule> cellules, Cellule c) {
 		if(caseVoisineGauche(cellules, c) instanceof MoneyBag
 			|| caseVoisineDroite(cellules, c) instanceof MoneyBag
@@ -94,22 +179,22 @@ public class Intruder extends Cellule implements Cell, Player{
 	}
 	
 	public Cellule caseVoisineDroite(ArrayList<Cellule> cellules, Cellule c) {
-		return getCellule(cellules, c.getPosX(), c.getPosY()+1);
+		return getCellule(cellules, c.getPosY(), c.getPosX()+1);
 	}
 	public Cellule caseVoisineGauche(ArrayList<Cellule> cellules, Cellule c) {
-		return getCellule(cellules, c.getPosX(), c.getPosY()-1);
+		return getCellule(cellules, c.getPosY(), c.getPosX()-1);
 	}
 	public Cellule caseVoisineHaut(ArrayList<Cellule> cellules, Cellule c) {
-		return getCellule(cellules, c.getPosX()-1, c.getPosY());
+		return getCellule(cellules, c.getPosY()-1, c.getPosX());
 	}
 	public Cellule caseVoisineBas(ArrayList<Cellule> cellules, Cellule c) {
-		return getCellule(cellules, c.getPosX()+1, c.getPosY());
+		return getCellule(cellules, c.getPosY()+1, c.getPosX());
 	}
 	
-	public Cellule getCellule(ArrayList<Cellule> cellules, int x, int y) {
+	public Cellule getCellule(ArrayList<Cellule> cellules, int y, int x) {
 		for(int i=0; i<cellules.size(); i++) {
 			Cellule c = (Cellule)cellules.get(i);			
-			if(c.getPosX() == x && c.getPosY() == y) {
+			if(c.getPosY() == y && c.getPosX() == x) {
 				return c;
 			}
 		}

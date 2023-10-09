@@ -5,7 +5,7 @@ public abstract class Cellule implements Cell{
 	protected int posX;
 	protected int posY;
 	
-	public Cellule(int posX, int posY) {
+	public Cellule(int posY, int posX) {
 		super();
 		this.posX = posX;
 		this.posY = posY;
@@ -27,7 +27,7 @@ public abstract class Cellule implements Cell{
 		this.posY = posY;
 	}
 	
-	public void move(Cellule c) {
+	public boolean move(Cellule c) {
 		if(this.canMove() && c.canMove()) {
 			int prevPosX = getPosX();
 			int prevPosY = getPosY();
@@ -37,7 +37,10 @@ public abstract class Cellule implements Cell{
 			
 			c.setPosX(prevPosX);
 			c.setPosY(prevPosY);
+			
+			return true;
 		}
+		return false;
 		
 	}
 	

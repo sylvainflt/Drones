@@ -1,28 +1,25 @@
 package drones;
 
+import java.util.Scanner;
+
 public class TestWorld {
 
 	public static void main(String[] args) {
 
-		World w = new World();
+		Scanner sc = new Scanner(System.in);
+		
+		World w = new World(sc);
 		w.majMap();
 		w.printWorld();
 		
-		w.movements();
-		w.majMap();
-		w.printWorld();
+		System.out.println("appuyer sur 1 pour la prochaine étape");
+		while(sc.nextInt() == 1) {
+			w.movements();
+			System.out.println("appuyer sur 1 pour la prochaine étape");
+		}
 		
-		w.movements();
-		w.majMap();
-		w.printWorld();
-	
-		w.movements();
-		w.majMap();
-		w.printWorld();
 		
-		w.movements();
-		w.majMap();
-		w.printWorld();
+		
 		
 	}
 

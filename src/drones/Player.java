@@ -1,11 +1,12 @@
 package drones;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public interface Player {
 
-	public void move(Cellule c);
+	public boolean move(Cellule c);
 	
-	public void play(ArrayList<Cellule> cellules);
+	public void play(ArrayList<Cellule> cellules, Scanner sc);
 	
 }
